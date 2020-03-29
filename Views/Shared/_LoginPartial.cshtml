@@ -1,0 +1,24 @@
+@using Microsoft.AspNetCore.Identity
+
+@{var user = Context.User; }
+
+@if (user.Identity.IsAuthenticated)
+{
+    <form asp-controller="Account" asp-action="Logout" class="navbar-right">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <span>Witaj @user.Identity.Name!</span>
+            </li>
+            <li>
+                <button type="submit" class="btn btn-link navbar-btn navbar-link">Wyloguj</button>
+            </li>
+        </ul>
+    </form>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <a asp-controller="Account" asp-action="Login">Zaloguj</a>
+        <a asp-controller="Account" asp-action="Register">Zarejestruj</a>
+    </ul>
+}
