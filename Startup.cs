@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Lost.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
 
 namespace Lost
 {
@@ -42,6 +43,12 @@ namespace Lost
                     options.AccessDeniedPath = "/account/denied";
                     options.LoginPath = "/account/login";
                 });
+
+            services.AddRecaptcha(new RecaptchaOptions
+            {
+                SiteKey = "6LfZ7-QUAAAAAC-bw6hzjnatSo828vitMHwRDVxZ",
+                SecretKey = "6LfZ7-QUAAAAAJH-HrVGttN9R6Ye67Ums7ZMpCOK"
+            });
 
             // Example of how to customize a particular instance of cookie options and
             // is able to also use other services.

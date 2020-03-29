@@ -10,6 +10,16 @@
 <p>
     <a asp-action="Create">Dodaj zaginionego</a>
 </p>
+<form action="/Lost/Index" method="get">
+    <span>Płeć: </span>
+    <select name="plec">
+        <option value="">Wszyscy</option>
+        <option value="K">Kobieta</option>
+        <option value="M">Mężczyzna</option>
+    </select>
+    <input type="submit" value="Filtruj" />
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -18,6 +28,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nazwisko)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Plec)
             </th>
             <th></th>
         </tr>
@@ -33,9 +46,12 @@
                     @Html.DisplayFor(modelItem => item.Nazwisko)
                 </td>
                 <td>
-                    @Html.ActionLink("Edytuj", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Podgląd", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Usuń", "Delete", new { id = item.Id })
+                    @Html.DisplayFor(modelItem => item.Plec)
+                </td>
+                <td>
+                    @Html.ActionLink("Podgląd", "Details", new { id = item.Id })
+                    @*@Html.ActionLink("Edytuj", "Edit", new { id = item.Id })*@
+                    @*@Html.ActionLink("Usuń", "Delete", new { id = item.Id })*@
                 </td>
             </tr>
         }

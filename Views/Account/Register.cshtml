@@ -20,6 +20,7 @@
                 <input asp-for="Haslo" class="form-control" />
                 <span asp-validation-for="Haslo" class="text-danger"></span>
             </div>
+            <recaptcha />
             <div class="form-group">
                 <input type="submit" value="Zarejestruj" class="btn btn-default" />
             </div>
@@ -29,5 +30,9 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <recaptcha-script />
 }
 

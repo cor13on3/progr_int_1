@@ -13,5 +13,6 @@ namespace Lost.Models
         public string Nazwisko { get; set; }
         public string Plec { get; set; }
         public string DataUrodzenia { get; set; }
+        public byte[] Zdjecie { get; set; }
     }
 }

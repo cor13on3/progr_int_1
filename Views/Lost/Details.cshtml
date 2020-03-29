@@ -4,6 +4,9 @@
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@{
+    string imagePath = "/Lost/Zdjecie?" + Model.Id.ToString();
+}
 
 <h2>Szczegóły</h2>
 
@@ -34,6 +37,9 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.DataUrodzenia)
+        </dd>
+        <dd>
+            <img src="@imagePath" model.Id alt="image" />
         </dd>
     </dl>
 </div>

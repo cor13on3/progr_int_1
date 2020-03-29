@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Lost.Models
 {
@@ -19,9 +13,11 @@ namespace Lost.Models
             _sql = new SqlConnection(conn);
         }
 
-        public IEnumerable<Zaginiony> GetOsoby()
+        public IEnumerable<Zaginiony> GetOsoby(string plec = null)
         {
             var query = "select * from Zaginieni";
+            if (plec != null)
+                query += $" where plec='{plec}'";
             SqlCommand command = new SqlCommand(query, _sql);
             _sql.Open();
             SqlDataReader reader = command.ExecuteReader();
@@ -43,11 +39,12 @@ namespace Lost.Models
 
         public void DodajOsobe(Zaginiony Zaginiony)
         {
-            var query = $"insert into Zaginieni(imie,nazwisko,plec,dataur) " +
+            var query = $"insert into Zaginieni(imie,nazwisko,plec,dataur,zdjecie) " +
                 $"values('{Zaginiony.Imie}'," +
                        $"'{Zaginiony.Nazwisko}'," +
                        $"'{Zaginiony.Plec}'," +
-                       $"'{Zaginiony.DataUrodzenia}')";
+                       $"'{Zaginiony.DataUrodzenia}'," +
+                       $"convert(VARBINARY(MAX), {Zaginiony.Zdjecie})";
             SqlCommand command = new SqlCommand(query, _sql);
             _sql.Open();
             command.ExecuteNonQuery();
@@ -89,6 +86,21 @@ namespace Lost.Models
             _sql.Close();
             return Zaginiony;
         }
+
+        public byte[] DajZdjecie(int id)
+        {
+            var query = $"select * from Zaginieni where id={id}";
+            SqlCommand command = new SqlCommand(query, _sql);
+            _sql.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            var Zaginiony = new Zaginiony { Id = id };
+            var b = new byte[0];
+            while (reader.Read())
+            {
+                b = (byte[])reader["zdjecie"];
+            };
+            _sql.Close();
+            return b;
+        }
     }
 }
-

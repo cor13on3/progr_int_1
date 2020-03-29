@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Lost.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lost.Controllers
@@ -17,9 +19,9 @@ namespace Lost.Controllers
         }
 
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(string plec = null)
         {
-            var osoby = _dal.GetOsoby().ToList();
+            var osoby = _dal.GetOsoby(plec).ToList();
             return View(osoby);
         }
 
@@ -31,16 +33,37 @@ namespace Lost.Controllers
         }
 
         [HttpGet]
+        public HttpContext Image(int id)
+        {
+            var bytesFromDatabase = _dal.DajZdjecie(id);
+            var context = HttpContext;
+            context.Response.ContentType = "image/jpeg";
+            context.Response.Body.Write(bytesFromDatabase, 0, bytesFromDatabase.Length);
+            return context;
+        }
+
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public ActionResult Create([Bind] Zaginiony obj)
+        public async Task<ActionResult> Create([Bind] Zaginiony obj, List<IFormFile> Zdjecie)
         {
             if (ModelState.IsValid)
             {
+                foreach (var file in Zdjecie)
+                {
+                    if (file.Length > 0)
+                    {
+                        using (var stream = new MemoryStream())
+                        {
+                            await file.CopyToAsync(stream);
+                            obj.Zdjecie = stream.ToArray();
+                        }
+                    }
+                }
                 _dal.DodajOsobe(obj);
                 return RedirectToAction("Index");
             }
