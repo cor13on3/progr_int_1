@@ -31,24 +31,7 @@ namespace Lost.Controllers
                 var user = _dal.Daj(obj.Email);
                 if (user.Haslo == obj.Haslo)
                 {
-                    var claims = new List<Claim>
-                    {
-                        new Claim("Email", user.Email),
-                        new Claim("Role", user.Rola.ToString()),
-                        new Claim("Banned", user.Zbanowany.ToString())
-                    };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    var authProperties = new AuthenticationProperties
-                    {
-                        AllowRefresh = true,
-                        IsPersistent = true,
-                    };
-
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
+                    await Zaloguj(user);
                     return RedirectToAction("Index", "Lost");
                 }
             }
@@ -62,18 +45,44 @@ namespace Lost.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register([Bind] Uzytkownik obj)
+        public async Task<IActionResult> Register([Bind] Uzytkownik obj)
         {
             if (ModelState.IsValid)
+            {
                 _dal.Dodaj(obj);
-            return View(obj);
+                var user = _dal.Daj(obj.Email);
+                await Zaloguj(user);
+            }
+            return RedirectToAction("Index", controllerName: "Home");
+        }
+
+        private async Task Zaloguj(Uzytkownik user)
+        {
+            var claims = new List<Claim>
+                    {
+                        new Claim("Email", user.Email),
+                        new Claim("Role", user.Rola.ToString()),
+                        new Claim("Banned", user.Zbanowany.ToString())
+                    };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                IsPersistent = true,
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
         }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return View("Login");
+            return RedirectToAction("Index", controllerName: "Home");
         }
 
         [HttpGet]

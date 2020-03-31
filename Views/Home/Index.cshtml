@@ -1,17 +1,32 @@
-﻿@{
+﻿@using Lost.Helpers;
+@{
     ViewData["Title"] = "Home Page";
 }
 @{var user = Context.User; }
 
 <div>
     <div class="item">
-        <a asp-controller="Lost" asp-action="Index">Przeglądaj jako gość</a>
-    </div>
-    <div class="item">
-        <a asp-controller="Account" asp-action="Login">Zaloguj się</a>
+        @{
+            if (AuthHelper.IsLogged(user))
+            {
+                <a asp-controller="Lost" asp-action="Index">Przeglądaj zaginionych</a>
+            }
+            else
+            {
+                <a asp-controller="Lost" asp-action="Index">Przeglądaj zaginionych jako gość</a>
+            }
+        }
     </div>
     @{
-        if (user.Claims.FirstOrDefault(x => x.Type == "Role")?.Value == RolaUzytkownika.Moderator.ToString())
+        if (!AuthHelper.IsLogged(user))
+        {
+            <div class="item">
+                <a asp-controller="Account" asp-action="Login">Zaloguj się</a>
+            </div>
+        }
+    }
+    @{
+        if (AuthHelper.CzyModerator(user))
         {
             <a asp-controller="Account" asp-action="List">Zarządzaj użytkownikami</a>
         }

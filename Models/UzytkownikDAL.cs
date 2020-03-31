@@ -15,7 +15,7 @@ namespace Lost.Models
 
         public void Dodaj(Uzytkownik uzytkownik)
         {
-            var query = $"insert into Uzytkownicy values('{uzytkownik.Email}', '{uzytkownik.Haslo}')";
+            var query = $"insert into Uzytkownicy values('{uzytkownik.Email}', '{uzytkownik.Haslo}', 0, 0)";
             SqlCommand command = new SqlCommand(query, _sql);
             _sql.Open();
             command.ExecuteNonQuery();

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Lost.Models.Zaginiony>
+﻿@using Lost.Helpers;
+@model IEnumerable<Lost.Models.Zaginiony>
 
 @{
     ViewData["Title"] = "Index";
@@ -52,7 +53,7 @@
                 <td>
                     @Html.ActionLink("Podgląd", "Details", new { id = item.Id })
                     @{
-                        if (user.Claims.FirstOrDefault(x => x.Type == "Role")?.Value == RolaUzytkownika.Moderator.ToString())
+                        if (AuthHelper.CzyModerator(user))
                         {
                             @Html.ActionLink("Edytuj", "Edit", new { id = item.Id })
                             @Html.ActionLink("Usuń", "Delete", new { id = item.Id })

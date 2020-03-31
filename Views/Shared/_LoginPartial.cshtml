@@ -1,15 +1,13 @@
-@using Microsoft.AspNetCore.Identity
-
 @{var user = Context.User; }
 
 @if (user.Identity.IsAuthenticated)
 {
     <form asp-controller="Account" asp-action="Logout" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
-            <li>
-                <span>Witaj @user.Claims.FirstOrDefault(x => x.Type == "Email")?.Value!</span>
+            <li class="nav-item">
+                <p class="text-primary">Witaj @user.Claims.FirstOrDefault(x => x.Type == "Email")?.Value!</p>
             </li>
-            <li>
+            <li class="nav-item">
                 <button type="submit" class="btn btn-link navbar-btn navbar-link">Wyloguj</button>
             </li>
         </ul>

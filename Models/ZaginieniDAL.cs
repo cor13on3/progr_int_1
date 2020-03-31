@@ -39,12 +39,11 @@ namespace Lost.Models
 
         public void DodajOsobe(Zaginiony Zaginiony)
         {
-            var query = $"insert into Zaginieni(imie,nazwisko,plec,dataur,zdjecie) " +
+            var query = $"insert into Zaginieni(imie,nazwisko,plec,dataur) " +
                 $"values('{Zaginiony.Imie}'," +
                        $"'{Zaginiony.Nazwisko}'," +
                        $"'{Zaginiony.Plec}'," +
-                       $"'{Zaginiony.DataUrodzenia}'," +
-                       $"convert(VARBINARY(MAX), {Zaginiony.Zdjecie})";
+                       $"'{Zaginiony.DataUrodzenia}')";
             SqlCommand command = new SqlCommand(query, _sql);
             _sql.Open();
             command.ExecuteNonQuery();
