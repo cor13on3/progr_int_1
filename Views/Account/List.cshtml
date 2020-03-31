@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Lost.Models.Uzytkownik>
+
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{var user = Context.User; }
+
+<h2>Lista użytkowników</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rola)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Zbanowany)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rola)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Zbanowany)
+                </td>
+                <td>
+                    @{
+                        if (user.Claims.FirstOrDefault(x => x.Type == "Role")?.Value == RolaUzytkownika.Moderator.ToString())
+                        {
+                            if (!item.Zbanowany)
+                            {
+                                @Html.ActionLink("Zbanuj", "Ban", new { email = item.Email });
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Odbanuj", "Ban", new { email = item.Email, value = false });
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

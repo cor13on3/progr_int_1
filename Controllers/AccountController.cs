@@ -1,5 +1,6 @@
 ﻿using Lost.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -23,7 +24,7 @@ namespace Lost.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Login([Bind] Uzytkownik obj)
+        public async Task<IActionResult> Login([Bind] Uzytkownik obj)
         {
             if (ModelState.IsValid)
             {
@@ -32,9 +33,22 @@ namespace Lost.Controllers
                 {
                     var claims = new List<Claim>
                     {
-                        new Claim("user", obj.Email),
+                        new Claim("Email", user.Email),
+                        new Claim("Role", user.Rola.ToString()),
+                        new Claim("Banned", user.Zbanowany.ToString())
                     };
-                    await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "user")));
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    var authProperties = new AuthenticationProperties
+                    {
+                        AllowRefresh = true,
+                        IsPersistent = true,
+                    };
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
                     return RedirectToAction("Index", "Lost");
                 }
             }
@@ -48,26 +62,32 @@ namespace Lost.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Register([Bind] Uzytkownik obj)
+        public IActionResult Register([Bind] Uzytkownik obj)
         {
             if (ModelState.IsValid)
-            {
                 _dal.Dodaj(obj);
-                var claims = new List<Claim>
-                {
-                    new Claim("user", obj.Email),
-                };
-                await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "user")));
-                return RedirectToAction("Index", "Lost");
-            }
             return View(obj);
         }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return View("Login");
+        }
+
+        [HttpGet]
+        public IActionResult List()
+        {
+            var res = _dal.Przegladaj();
+            return View(res);
+        }
+
+        [HttpGet]
+        public IActionResult Ban(string email, bool value = true)
+        {
+            _dal.Banuj(email, value);
+            return RedirectToAction("List");
         }
     }
 }

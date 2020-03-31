@@ -7,7 +7,7 @@
     <form asp-controller="Account" asp-action="Logout" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">
             <li>
-                <span>Witaj @user.Identity.Name!</span>
+                <span>Witaj @user.Claims.FirstOrDefault(x => x.Type == "Email")?.Value!</span>
             </li>
             <li>
                 <button type="submit" class="btn btn-link navbar-btn navbar-link">Wyloguj</button>

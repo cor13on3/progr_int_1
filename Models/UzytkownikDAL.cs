@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Lost.Models
 {
@@ -38,9 +34,40 @@ namespace Lost.Models
                 {
                     Email = reader["email"].ToString(),
                     Haslo = reader["haslo"].ToString(),
+                    Rola = (RolaUzytkownika)reader["rola"],
+                    Zbanowany = (bool)reader["zbanowany"]
                 };
             }
             return null;
+        }
+
+        public Uzytkownik[] Przegladaj()
+        {
+            var query = $"select email, rola, zbanowany from Uzytkownicy";
+            SqlCommand command = new SqlCommand(query, _sql);
+            _sql.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            var wynik = new List<Uzytkownik>();
+            while (reader.Read())
+            {
+                wynik.Add(new Uzytkownik
+                {
+                    Email = reader["email"].ToString(),
+                    Rola = (RolaUzytkownika)reader["rola"],
+                    Zbanowany = (bool)reader["zbanowany"]
+                });
+            }
+            return wynik.ToArray();
+        }
+
+        public void Banuj(string email, bool value)
+        {
+            int val = value ? 1 : 0;
+            var query = $"update Uzytkownicy set zbanowany={val.ToString()} where email='{email}'";
+            SqlCommand command = new SqlCommand(query, _sql);
+            _sql.Open();
+            command.ExecuteNonQuery();
+            _sql.Close();
         }
     }
 }

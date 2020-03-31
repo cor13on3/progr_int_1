@@ -1,6 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@{var user = Context.User; }
 
 <div>
     <div class="item">
@@ -9,4 +10,10 @@
     <div class="item">
         <a asp-controller="Account" asp-action="Login">Zaloguj się</a>
     </div>
+    @{
+        if (user.Claims.FirstOrDefault(x => x.Type == "Role")?.Value == RolaUzytkownika.Moderator.ToString())
+        {
+            <a asp-controller="Account" asp-action="List">Zarządzaj użytkownikami</a>
+        }
+    }
 </div>

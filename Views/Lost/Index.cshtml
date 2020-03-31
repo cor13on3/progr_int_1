@@ -4,6 +4,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@{var user = Context.User; }
 
 <h2>Lista zaginionych</h2>
 
@@ -50,8 +51,13 @@
                 </td>
                 <td>
                     @Html.ActionLink("Podgląd", "Details", new { id = item.Id })
-                    @*@Html.ActionLink("Edytuj", "Edit", new { id = item.Id })*@
-                    @*@Html.ActionLink("Usuń", "Delete", new { id = item.Id })*@
+                    @{
+                        if (user.Claims.FirstOrDefault(x => x.Type == "Role")?.Value == RolaUzytkownika.Moderator.ToString())
+                        {
+                            @Html.ActionLink("Edytuj", "Edit", new { id = item.Id })
+                            @Html.ActionLink("Usuń", "Delete", new { id = item.Id })
+                        }
+                    }
                 </td>
             </tr>
         }

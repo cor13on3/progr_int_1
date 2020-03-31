@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Lost.Models;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using PaulMiami.AspNetCore.Mvc.Recaptcha;
 
 namespace Lost
@@ -27,20 +18,18 @@ namespace Lost
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddAuthentication("LOGIN") // Sets the default scheme to cookies
-                .AddCookie("LOGIN", options =>
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
-                    options.AccessDeniedPath = "/account/denied";
+                    options.AccessDeniedPath = "/home/index";
                     options.LoginPath = "/account/login";
                 });
 
@@ -50,14 +39,14 @@ namespace Lost
                 SecretKey = "6LfZ7-QUAAAAAJH-HrVGttN9R6Ye67Ums7ZMpCOK"
             });
 
+
             // Example of how to customize a particular instance of cookie options and
             // is able to also use other services.
-            //services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureMyCookie>();
+            // services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureMyCookie>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -76,7 +65,6 @@ namespace Lost
             app.UseCookiePolicy();
 
             app.UseAuthentication();
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
