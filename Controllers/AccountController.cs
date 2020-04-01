@@ -1,4 +1,5 @@
-﻿using Lost.Models;
+﻿using Lost.Data;
+using Lost.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,9 @@ namespace Lost.Controllers
     {
         private UzytkownikDAL _dal;
 
-        public AccountController()
+        public AccountController(LostContext lostContext)
         {
-            _dal = new UzytkownikDAL();
+            _dal = new UzytkownikDAL(lostContext);
         }
 
         [HttpGet]

@@ -1,7 +1,10 @@
-﻿namespace Lost.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Lost.Models
 {
     public class Uzytkownik
     {
+        public int UzytkownikID { get; set; }
         public string Email { get; set; }
         public string Haslo { get; set; }
         public RolaUzytkownika Rola { get; set; }

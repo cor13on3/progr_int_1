@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
+using Lost.Data;
 using Lost.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,15 +13,15 @@ namespace Lost.Controllers
     {
         private ZaginieniDAL _dal;
 
-        public LostController()
+        public LostController(LostContext lostContext)
         {
-            _dal = new ZaginieniDAL();
+            _dal = new ZaginieniDAL(lostContext);
         }
 
         [HttpGet]
         public ActionResult Index(string plec = null)
         {
-            var osoby = _dal.GetOsoby(plec).ToList();
+            var osoby = _dal.GetOsoby(plec);
             return View(osoby);
         }
 
@@ -29,17 +29,10 @@ namespace Lost.Controllers
         public ActionResult Details(int id)
         {
             var osoba = _dal.DajOsobe(id);
+            var bytes = _dal.DajZdjecie(id);
+            string imageData = @"data:image/jpg;base64," + Convert.ToBase64String(bytes);
+            ViewBag.ImageData = imageData;
             return View(osoba);
-        }
-
-        [HttpGet]
-        public HttpContext Image(int id)
-        {
-            var bytesFromDatabase = _dal.DajZdjecie(id);
-            var context = HttpContext;
-            context.Response.ContentType = "image/jpeg";
-            context.Response.Body.Write(bytesFromDatabase, 0, bytesFromDatabase.Length);
-            return context;
         }
 
         [HttpGet]

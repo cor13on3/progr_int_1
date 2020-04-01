@@ -51,12 +51,12 @@
                     @Html.DisplayFor(modelItem => item.Plec)
                 </td>
                 <td>
-                    @Html.ActionLink("Podgląd", "Details", new { id = item.Id })
+                    @Html.ActionLink("Podgląd", "Details", new { id = item.ZaginionyID })
                     @{
                         if (AuthHelper.CzyModerator(user))
                         {
-                            @Html.ActionLink("Edytuj", "Edit", new { id = item.Id })
-                            @Html.ActionLink("Usuń", "Delete", new { id = item.Id })
+                            @Html.ActionLink("Edytuj", "Edit", new { id = item.ZaginionyID })
+                            @Html.ActionLink("Usuń", "Delete", new { id = item.ZaginionyID })
                         }
                     }
                 </td>

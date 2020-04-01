@@ -1,105 +1,75 @@
-﻿using System.Collections.Generic;
-using System.Data.SqlClient;
+﻿using Lost.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lost.Models
 {
     public class ZaginieniDAL
     {
-        private SqlConnection _sql;
+        private LostContext _lostContext;
 
-        public ZaginieniDAL()
+        public ZaginieniDAL(LostContext lostContext)
         {
-            string conn = "Data Source=localhost;Initial Catalog=pi;Integrated Security=True";
-            _sql = new SqlConnection(conn);
+            _lostContext = lostContext;
         }
 
         public IEnumerable<Zaginiony> GetOsoby(string plec = null)
         {
-            var query = "select * from Zaginieni";
-            if (plec != null)
-                query += $" where plec='{plec}'";
-            SqlCommand command = new SqlCommand(query, _sql);
-            _sql.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            var osoby = new List<Zaginiony>();
-            while (reader.Read())
-            {
-                osoby.Add(new Zaginiony
+            return _lostContext.Zaginieni
+                .Where(x => plec != null ? x.Plec == plec : x.Plec != null)
+                .Select(x => new Zaginiony
                 {
-                    Id = int.Parse(reader["id"].ToString()),
-                    Imie = reader["imie"].ToString(),
-                    Nazwisko = reader["nazwisko"].ToString(),
-                    Plec = reader["plec"].ToString(),
-                    DataUrodzenia = reader["dataur"].ToString()
-                }); ; ;
+                    ZaginionyID = x.ZaginionyID,
+                    Imie = x.Imie,
+                    Nazwisko = x.Nazwisko,
+                    Plec = x.Plec
+                })
+                .ToList();
+        }
+
+        public void DodajOsobe(Zaginiony zaginiony)
+        {
+            _lostContext.Zaginieni.Add(zaginiony);
+            _lostContext.SaveChanges();
+        }
+
+        public void EdytujOsobe(Zaginiony zaginiony)
+        {
+            var res = _lostContext.Zaginieni.SingleOrDefault(x => x.ZaginionyID == zaginiony.ZaginionyID);
+            if (res != null)
+            {
+                res.Imie = zaginiony.Imie;
+                res.Nazwisko = zaginiony.Nazwisko;
+                res.Plec = zaginiony.Plec;
+                res.DataUrodzenia = zaginiony.DataUrodzenia;
+                _lostContext.SaveChanges();
             }
-            _sql.Close();
-            return osoby;
-        }
-
-        public void DodajOsobe(Zaginiony Zaginiony)
-        {
-            var query = $"insert into Zaginieni(imie,nazwisko,plec,dataur) " +
-                $"values('{Zaginiony.Imie}'," +
-                       $"'{Zaginiony.Nazwisko}'," +
-                       $"'{Zaginiony.Plec}'," +
-                       $"'{Zaginiony.DataUrodzenia}')";
-            SqlCommand command = new SqlCommand(query, _sql);
-            _sql.Open();
-            command.ExecuteNonQuery();
-            _sql.Close();
-        }
-
-        public void EdytujOsobe(Zaginiony Zaginiony)
-        {
-            var query = $"update Zaginieni set imie = '{Zaginiony.Imie}', nazwisko='{Zaginiony.Nazwisko}', plec='{Zaginiony.Plec}', dataur='{Zaginiony.DataUrodzenia}' where id={Zaginiony.Id}";
-            SqlCommand command = new SqlCommand(query, _sql);
-            _sql.Open();
-            command.ExecuteNonQuery();
-            _sql.Close();
         }
 
         public void UsunOsobe(int id)
         {
-            var query = $"delete from Zaginieni where id={id}";
-            SqlCommand command = new SqlCommand(query, _sql);
-            _sql.Open();
-            command.ExecuteNonQuery();
-            _sql.Close();
+            var res = _lostContext.Zaginieni.SingleOrDefault(x => x.ZaginionyID == id);
+            if (res != null)
+            {
+                _lostContext.Zaginieni.Remove(res);
+                _lostContext.SaveChanges();
+            }
         }
 
         public Zaginiony DajOsobe(int id)
         {
-            var query = $"select * from Zaginieni where id={id}";
-            SqlCommand command = new SqlCommand(query, _sql);
-            _sql.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            var Zaginiony = new Zaginiony { Id = id };
-            while (reader.Read())
-            {
-                Zaginiony.Imie = reader["imie"].ToString();
-                Zaginiony.Nazwisko = reader["nazwisko"].ToString();
-                Zaginiony.Plec = reader["plec"].ToString();
-                Zaginiony.DataUrodzenia = reader["dataur"].ToString();
-            }
-            _sql.Close();
-            return Zaginiony;
+            var res = _lostContext.Zaginieni.SingleOrDefault(x => x.ZaginionyID == id);
+            if (res != null)
+                return res;
+            return new Zaginiony();
         }
 
         public byte[] DajZdjecie(int id)
         {
-            var query = $"select * from Zaginieni where id={id}";
-            SqlCommand command = new SqlCommand(query, _sql);
-            _sql.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            var Zaginiony = new Zaginiony { Id = id };
-            var b = new byte[0];
-            while (reader.Read())
-            {
-                b = (byte[])reader["zdjecie"];
-            };
-            _sql.Close();
-            return b;
+            var res = _lostContext.Zaginieni.SingleOrDefault(x => x.ZaginionyID == id);
+            if (res != null)
+                return res.Zdjecie;
+            return new byte[0];
         }
     }
 }

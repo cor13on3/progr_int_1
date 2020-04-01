@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Lost.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PaulMiami.AspNetCore.Mvc.Recaptcha;
@@ -39,10 +41,8 @@ namespace Lost
                 SecretKey = "6LfZ7-QUAAAAAJH-HrVGttN9R6Ye67Ums7ZMpCOK"
             });
 
-
-            // Example of how to customize a particular instance of cookie options and
-            // is able to also use other services.
-            // services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureMyCookie>();
+            services.AddDbContext<LostContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
