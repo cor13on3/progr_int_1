@@ -42,6 +42,7 @@ namespace Lost.Models
                 res.Nazwisko = zaginiony.Nazwisko;
                 res.Plec = zaginiony.Plec;
                 res.DataUrodzenia = zaginiony.DataUrodzenia;
+                _lostContext.Zaginieni.Update(res);
                 _lostContext.SaveChanges();
             }
         }

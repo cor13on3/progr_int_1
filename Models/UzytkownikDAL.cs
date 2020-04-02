@@ -31,9 +31,9 @@ namespace Lost.Models
             return _lostContext.Uzytkownicy.ToArray();
         }
 
-        public void Banuj(string email, bool value)
+        public void UstawBan(int id, bool value)
         {
-            var res = _lostContext.Uzytkownicy.SingleOrDefault(x => x.Email == email);
+            var res = _lostContext.Uzytkownicy.SingleOrDefault(x => x.UzytkownikID == id);
             if (res != null)
             {
                 res.Zbanowany = value;

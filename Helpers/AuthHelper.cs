@@ -20,5 +20,10 @@ namespace Lost.Helpers
         {
             return user.Claims.FirstOrDefault(x => x.Type == "Role")?.Value == RolaUzytkownika.Moderator.ToString();
         }
+
+        public static bool CzyZbanowany(ClaimsPrincipal user)
+        {
+            return user.Claims.FirstOrDefault(x => x.Type == "Banned")?.Value == "True";
+        }
     }
 }

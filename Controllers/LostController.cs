@@ -70,14 +70,15 @@ namespace Lost.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit([Bind] Zaginiony osoba)
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit([Bind] Zaginiony zaginiony)
         {
             if (ModelState.IsValid)
             {
-                _dal.EdytujOsobe(osoba);
+                _dal.EdytujOsobe(zaginiony);
                 return RedirectToAction("Index");
             }
-            return View(osoba);
+            return View(zaginiony);
         }
 
         public ActionResult Delete(int id)

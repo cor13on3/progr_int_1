@@ -42,11 +42,11 @@
                         {
                             if (!item.Zbanowany)
                             {
-                                @Html.ActionLink("Zbanuj", "Ban", new { email = item.Email });
+                                @Html.ActionLink("Zbanuj", "SetBanned", new { id = item.UzytkownikID});
                             }
                             else
                             {
-                                @Html.ActionLink("Odbanuj", "Ban", new { email = item.Email, value = false });
+                                @Html.ActionLink("Odbanuj", "SetBanned", new { id = item.UzytkownikID, value = false });
                             }
                         }
                     }

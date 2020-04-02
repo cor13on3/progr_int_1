@@ -94,9 +94,9 @@ namespace Lost.Controllers
         }
 
         [HttpGet]
-        public IActionResult Ban(string email, bool value = true)
+        public IActionResult SetBanned(int id, bool value = true)
         {
-            _dal.Banuj(email, value);
+            _dal.UstawBan(id, value);
             return RedirectToAction("List");
         }
     }
